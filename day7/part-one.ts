@@ -21,7 +21,6 @@ let currNode = root;
 instructions.forEach((instruction) => {
   const text = instruction.split(" ");
   const command = text[0] === "$";
-  console.log(instruction);
 
   if (command) {
     if (text[1] === "cd") {
@@ -51,8 +50,8 @@ instructions.forEach((instruction) => {
         parent: currNode,
         children: null,
       };
-      const saveNode = currNode;
       currNode.children[newNode.name] = newNode;
+      const saveNode = currNode;
       while (currNode.parent !== null) {
         const childrenTotal = Object.values(currNode.children ?? {}).reduce(
           (acc, curr) => acc + curr.size,
@@ -69,26 +68,20 @@ instructions.forEach((instruction) => {
       currNode = saveNode;
     }
   }
-  console.log("currNode", currNode.name);
-  // console.log("\n");
 });
 
+const directories: Node[] = [];
+
 const rec_total = (total: number, node: Node) => {
-  if (node.size < 10000) {
-    total += node.size;
+  if (node.children && node.size < 100000) {
+    directories.push(node);
   }
 
   if (node.children) {
-    const map: number[] = Object.values(node.children).map((node) => {
+    Object.values(node.children).forEach((node) => {
       return rec_total(total, node);
     });
-
-    const childrenTotal = map.reduce((acc, curr) => acc + curr, 0);
-
-    return childrenTotal;
   }
-
-  return total;
 };
 
-console.log(rec_total(0, root));
+console.log(directories.reduce((acc, curr) => acc + curr.size, 0));
