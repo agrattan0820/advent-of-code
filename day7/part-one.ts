@@ -50,8 +50,8 @@ instructions.forEach((instruction) => {
         parent: currNode,
         children: null,
       };
-      currNode.children[newNode.name] = newNode;
       const saveNode = currNode;
+      currNode.children[newNode.name] = newNode;
       while (currNode.parent !== null) {
         const childrenTotal = Object.values(currNode.children ?? {}).reduce(
           (acc, curr) => acc + curr.size,
@@ -72,16 +72,20 @@ instructions.forEach((instruction) => {
 
 const directories: Node[] = [];
 
-const rec_total = (total: number, node: Node) => {
+const rec_total = (node: Node) => {
   if (node.children && node.size < 100000) {
     directories.push(node);
   }
 
   if (node.children) {
-    Object.values(node.children).forEach((node) => {
-      return rec_total(total, node);
+    Object.values(node.children).forEach((childNode) => {
+      rec_total(childNode);
     });
   }
 };
 
-console.log(directories.reduce((acc, curr) => acc + curr.size, 0));
+rec_total(root);
+console.log(
+  "Answer:",
+  directories.reduce((acc, curr) => acc + curr.size, 0)
+);
